@@ -32,6 +32,7 @@ pub mod chirp_staking {
         let status = &mut ctx.accounts.status;
         status.token = *ctx.accounts.mint.to_account_info().key;
         status.owner = *ctx.accounts.signer.to_account_info().key;
+        status.pools_enabled = true;
 
         Ok(())
     }
