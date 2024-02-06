@@ -9,6 +9,7 @@ use anchor_spl::{
 };
 use errors::*;
 use events::*;
+use solana_program::clock::Clock;
 
 declare_id!("5ghCYkAfKSYZxuWi3ACcWviF9d7zCE8XKf2LD4hajMcL");
 
@@ -46,7 +47,7 @@ pub mod chirp_staking {
         if ctx.accounts.status.owner != *ctx.accounts.signer.to_account_info().key {
             return err!(StakingErrors::NotOwner);
         }
-        if pool_id == ctx.accounts.status.total_pools + 1 {
+        if pool_id != ctx.accounts.status.total_pools + 1 {
             return err!(StakingErrors::InvalidPoolId);
         }
         if reward_basis == 0 || lock_duration == 0 {
@@ -55,6 +56,7 @@ pub mod chirp_staking {
         let pool_info = &mut ctx.accounts.new_pool;
         pool_info.reward_basis = reward_basis;
         pool_info.lock_duration = lock_duration;
+        pool_info.pool_id = pool_id;
         pool_info.is_active = true;
         // Increase total Pools by 1
         ctx.accounts.status.total_pools += 1;
@@ -72,8 +74,9 @@ pub mod chirp_staking {
         if !ctx.accounts.pool.is_active || !ctx.accounts.status.pools_enabled {
             return err!(StakingErrors::InactivePool);
         }
+        let mint = ctx.accounts.mint.key();
         // Validate that token is the same as the one in status account
-        if ctx.accounts.mint.to_account_info().key != &ctx.accounts.status.token {
+        if mint != ctx.accounts.status.token {
             return err!(StakingErrors::InvalidTokenAccount);
         }
         // Validate that pool_id is valid
@@ -382,18 +385,18 @@ pub struct Stake<'info> {
     pub signer: Signer<'info>,
 
     // Pool Account
-    #[account(
+    #[account(mut,
         seeds = [constants::POOL_SEED, &[pool_id]],
         bump,
     )]
-    pub pool: Account<'info, Pool>,
+    pub pool: Box<Account<'info, Pool>>,
 
     // User's Token Account
     #[account(mut,
         associated_token::mint = mint,
         associated_token::authority = signer,
     )]
-    pub user_token_account: Account<'info, TokenAccount>,
+    pub user_token_account: Box<Account<'info, TokenAccount>>,
 
     #[account(
         init_if_needed,
@@ -403,7 +406,7 @@ pub struct Stake<'info> {
         token::mint = mint,
         token::authority = position_vault,
     )]
-    pub position_vault: Account<'info, TokenAccount>,
+    pub position_vault: Box<Account<'info, TokenAccount>>,
 
     // User's Staking Position
     #[account(
@@ -413,7 +416,7 @@ pub struct Stake<'info> {
         payer = signer,
         space = 8 + std::mem::size_of::<StakingPosition>()
     )]
-    pub staking_position: Account<'info, StakingPosition>,
+    pub staking_position: Box<Account<'info, StakingPosition>>,
 
     #[account(mut,
         seeds=[constants::VAULT_SEED],
@@ -421,7 +424,7 @@ pub struct Stake<'info> {
         token::mint = mint,
         token::authority = token_vault,
     )]
-    pub token_vault: Account<'info, TokenAccount>,
+    pub token_vault: Box<Account<'info, TokenAccount>>,
 
     pub mint: Account<'info, Mint>,
 
