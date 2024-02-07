@@ -71,10 +71,10 @@ const AdminPools: FC = () => {
                 >
                   <div className="flex flex-row w-full justify-between">
                     <span className="font-[Eazy] text-xl text-white/90 tracking-wide">
-                      Staked in Pool: {pool.pool_staked}
+                      Staked in Pool: {pool.pool_staked.toString()}
                     </span>
                     <span className="font-[Eazy] text-xl text-white/90 tracking-wide">
-                      Lock period: {pool.lock_duration}
+                      Lock period: {pool.lock_duration.toString()}
                     </span>
                     <span className="font-[Eazy] text-xl text-white/90 tracking-wide">
                       Reward Basis: {pool.reward_basis}

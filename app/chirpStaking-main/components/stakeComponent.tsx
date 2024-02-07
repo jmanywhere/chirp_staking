@@ -11,7 +11,6 @@ import useStakingProgram from "@/hooks/useStakingProgram";
 import { useAnchorWallet, AnchorWallet } from "@solana/wallet-adapter-react";
 
 const StakeComponent = () => {
-  
   const stakeTokens = useStakingProgram((state) => state.stake);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -52,7 +51,7 @@ const StakeComponent = () => {
               scale: 1.01,
               transition: { duration: 0.3 },
             }}
-            onClick={() => setModalOpen(true)}
+            // onClick={() => setModalOpen(true)}
             className="col-span-1 bg-[#dd3a3d] rounded-md p-5 text-white font-[Chillow]"
           >
             Stake
@@ -80,9 +79,7 @@ const StakeComponent = () => {
             Claim
           </motion.button>
         </div>
-
       </div>
-      
     </section>
   );
 };

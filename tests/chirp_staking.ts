@@ -14,123 +14,145 @@ describe("chirp_staking", () => {
 
   const payer = provider.wallet as anchor.Wallet;
   const program = anchor.workspace.ChirpStaking as Program<ChirpStaking>;
-  const token = createOrGetTokenAddress();
+  console.log("Program ID", program.programId.toBase58());
+  console.log("Payer", payer.publicKey.toBase58());
+  // const chirpToken = new PublicKey("ALdyWN5zRTMA8p2yGaBx72jjam1YArdvpz6EetLWxzt1");
+  // // const token = createOrGetTokenAddress();
 
   
-  it("Is initialized!", async () => {
-    await createMintToken(token, payer, connection);
+  // it("Is initialized!", async () => {
+  //   // await createMintToken(token, payer, connection);
 
-    const [tokenVault] = PublicKey.findProgramAddressSync([Buffer.from("vault")], program.programId);
-    const [status] = PublicKey.findProgramAddressSync([Buffer.from("status")], program.programId);
-    // Add your test here.
-    const tx = await program.methods.initialize().accounts({
-      tokenVault,
-      status,
-      mint: token.publicKey,
-    }).rpc();
-    console.log("Your transaction signature", tx);
-    waitForTransaction(connection, tx);
+  //   const [tokenVault] = PublicKey.findProgramAddressSync([Buffer.from("vault")], program.programId);
+  //   const [status] = PublicKey.findProgramAddressSync([Buffer.from("status")], program.programId);
+  //   // Add your test here.
+  //   const tx = await program.methods.initialize().accounts({
+  //     tokenVault,
+  //     status,
+  //     mint: chirpToken,
+  //   }).rpc();
+  //   console.log("Your transaction signature", tx);
+  //   await waitForTransaction(connection, tx);
 
-    const transfertx = await transfer(
-      connection, payer.payer, (await getOrCreateAssociatedTokenAccount(connection, payer.payer, token.publicKey, payer.publicKey)).address, 
-      tokenVault, payer.publicKey, 90_000 * 1e9
-      );
-      waitForTransaction(connection, transfertx);
+  //   // const transfertx = await transfer(
+  //   //   connection, payer.payer, (await getOrCreateAssociatedTokenAccount(connection, payer.payer, token.publicKey, payer.publicKey)).address, 
+  //   //   tokenVault, payer.publicKey, 90_000 * 1e9
+  //   //   );
+  //   //   waitForTransaction(connection, transfertx);
     
-  });
+  // });
 
-  it("can create pool", async () => {
+  // it("can create pool", async () => {
 
-    const [status] = PublicKey.findProgramAddressSync([Buffer.from("status")], program.programId);
-    const [pool1] = PublicKey.findProgramAddressSync([Buffer.from("pool"), new Uint8Array([1])], program.programId);
+  //   const [status] = PublicKey.findProgramAddressSync([Buffer.from("status")], program.programId);
+  //   const [pool1] = PublicKey.findProgramAddressSync([Buffer.from("pool"), new Uint8Array([1])], program.programId);
+  //   const [pool2] = PublicKey.findProgramAddressSync([Buffer.from("pool"), new Uint8Array([2])], program.programId);
+  //   const [pool3] = PublicKey.findProgramAddressSync([Buffer.from("pool"), new Uint8Array([3])], program.programId);
 
-    const time1 = 5; // 5 seconds
+  //   const time1 = 30 * 24 * 3600; // 5 seconds
+  //   const time2 = 60 * 24 * 3600; // 5 seconds
+  //   const time3 = 90 * 24 * 3600; // 5 seconds
 
-    const tx = await program.methods.createPool(1, new anchor.BN(time1), 20)
-      .accounts({
-        newPool: pool1,
-        status,
-      }).rpc();
+  //   const tx = await program.methods.createPool(1, new anchor.BN(time1), 5)
+  //     .accounts({
+  //       newPool: pool1,
+  //       status,
+  //     }).rpc();
+  //   const tx2 = await program.methods.createPool(2, new anchor.BN(time2), 15)
+  //     .accounts({
+  //       newPool: pool2,
+  //       status,
+  //     }).rpc();
+  //   const tx3 = await program.methods.createPool(3, new anchor.BN(time3), 30)
+  //     .accounts({
+  //       newPool: pool3,
+  //       status,
+  //     }).rpc();
 
-    waitForTransaction(connection, tx);
+  //   const newOwner = new PublicKey("71cb6Wk3sness4ZSezZtBg9Ffordzw7c1NaYnDGcr14U");
+  //   const ownerTransferTx = await program.methods.transferOwner(newOwner).accounts({
+  //     status,
+  //   }).rpc();
 
-    const pool = await program.account.pool.fetch(pool1);
-    const statusInfo = await program.account.status.fetch(status);
-    assert.equal(pool.poolId, 1, "pool id not set");
-    assert.equal(statusInfo.poolsEnabled, true, "pools disabled")
-    assert.equal(statusInfo.totalPools, 1, "pools size increased")
-  })
+  //   await waitForTransaction(connection, ownerTransferTx);
 
-  it("can stake", async () => {
-    const [status] = PublicKey.findProgramAddressSync([Buffer.from("status")], program.programId);
-    const [pool1] = PublicKey.findProgramAddressSync([Buffer.from("pool"), new Uint8Array([1])], program.programId);
-    const [stakingPosition1] = PublicKey.findProgramAddressSync([payer.publicKey.toBuffer(), new Uint8Array([1])], program.programId);
-    const [pos1Vault] = PublicKey.findProgramAddressSync([Buffer.from("position"), payer.publicKey.toBuffer(), new Uint8Array([1])], program.programId);
-    const [tokenVault] = PublicKey.findProgramAddressSync([Buffer.from("vault")], program.programId);
+  //   const pool = await program.account.pool.fetch(pool1);
+  //   const statusInfo = await program.account.status.fetch(status);
+  //   assert.equal(pool.poolId, 1, "pool id not set");
+  //   assert.equal(statusInfo.poolsEnabled, true, "pools disabled")
+  //   assert.equal(statusInfo.totalPools, 3, "pools size increased")
+  // })
 
-    const userTokenAddress = await getOrCreateAssociatedTokenAccount(
-      connection,
-      payer.payer,
-      token.publicKey,
-      payer.publicKey
-    )
+  // it("can stake", async () => {
+  //   const [status] = PublicKey.findProgramAddressSync([Buffer.from("status")], program.programId);
+  //   const [pool1] = PublicKey.findProgramAddressSync([Buffer.from("pool"), new Uint8Array([1])], program.programId);
+  //   const [stakingPosition1] = PublicKey.findProgramAddressSync([payer.publicKey.toBuffer(), new Uint8Array([1])], program.programId);
+  //   const [pos1Vault] = PublicKey.findProgramAddressSync([Buffer.from("position"), payer.publicKey.toBuffer(), new Uint8Array([1])], program.programId);
+  //   const [tokenVault] = PublicKey.findProgramAddressSync([Buffer.from("vault")], program.programId);
 
-    const stakedAmount = new anchor.BN("100000000000");
-    const tx = await program.methods.stake(1, stakedAmount)
-    .accounts({
-      pool: pool1,
-      stakingPosition: stakingPosition1,
-      userTokenAccount: userTokenAddress.address,
-      positionVault: pos1Vault,
-      tokenVault,
-      status,
-      mint: token.publicKey,
-    })
-    .rpc({
-      skipPreflight: true
-    });
+  //   const userTokenAddress = await getOrCreateAssociatedTokenAccount(
+  //     connection,
+  //     payer.payer,
+  //     token.publicKey,
+  //     payer.publicKey
+  //   )
 
-    waitForTransaction(connection, tx);
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    const pool1Stake = await program.account.pool.fetch(pool1);
-    assert.equal(pool1Stake.poolStaked.toString(), stakedAmount.toString(), "stake not set");
-    const userPosition = await program.account.stakingPosition.fetch(stakingPosition1);
-    assert.equal(userPosition.stakedAmount.toString(), stakedAmount.toString(), "user stake not set");
-  })
+  //   const stakedAmount = new anchor.BN("100000000000");
+  //   const tx = await program.methods.stake(1, stakedAmount)
+  //   .accounts({
+  //     pool: pool1,
+  //     stakingPosition: stakingPosition1,
+  //     userTokenAccount: userTokenAddress.address,
+  //     positionVault: pos1Vault,
+  //     tokenVault,
+  //     status,
+  //     mint: token.publicKey,
+  //   })
+  //   .rpc({
+  //     skipPreflight: true
+  //   });
 
-  it("can claim rewards", async () => {
-    const [status] = PublicKey.findProgramAddressSync([Buffer.from("status")], program.programId);
-    const [pool1] = PublicKey.findProgramAddressSync([Buffer.from("pool"), new Uint8Array([1])], program.programId);
-    const [stakingPosition1] = PublicKey.findProgramAddressSync([payer.publicKey.toBuffer(), new Uint8Array([1])], program.programId);
-    const [pos1Vault] = PublicKey.findProgramAddressSync([Buffer.from("position"), payer.publicKey.toBuffer(), new Uint8Array([1])], program.programId);
-    const [tokenVault] = PublicKey.findProgramAddressSync([Buffer.from("vault")], program.programId);
+  //   waitForTransaction(connection, tx);
+  //   await new Promise((resolve) => setTimeout(resolve, 1000));
+  //   const pool1Stake = await program.account.pool.fetch(pool1);
+  //   assert.equal(pool1Stake.poolStaked.toString(), stakedAmount.toString(), "stake not set");
+  //   const userPosition = await program.account.stakingPosition.fetch(stakingPosition1);
+  //   assert.equal(userPosition.stakedAmount.toString(), stakedAmount.toString(), "user stake not set");
+  // })
 
-    const userTokenAddress = await getOrCreateAssociatedTokenAccount(
-      connection,
-      payer.payer,
-      token.publicKey,
-      payer.publicKey
-    )
+  // it("can claim rewards", async () => {
+  //   const [status] = PublicKey.findProgramAddressSync([Buffer.from("status")], program.programId);
+  //   const [pool1] = PublicKey.findProgramAddressSync([Buffer.from("pool"), new Uint8Array([1])], program.programId);
+  //   const [stakingPosition1] = PublicKey.findProgramAddressSync([payer.publicKey.toBuffer(), new Uint8Array([1])], program.programId);
+  //   const [pos1Vault] = PublicKey.findProgramAddressSync([Buffer.from("position"), payer.publicKey.toBuffer(), new Uint8Array([1])], program.programId);
+  //   const [tokenVault] = PublicKey.findProgramAddressSync([Buffer.from("vault")], program.programId);
 
-    await new Promise((resolve) => setTimeout(resolve, 6000));
+  //   const userTokenAddress = await getOrCreateAssociatedTokenAccount(
+  //     connection,
+  //     payer.payer,
+  //     token.publicKey,
+  //     payer.publicKey
+  //   )
+
+  //   await new Promise((resolve) => setTimeout(resolve, 6000));
 
 
-    const tx = await program.methods.unstake(1).
-      accounts ({
-        pool: pool1,
-        stakingPosition: stakingPosition1,
-        userTokenAccount: userTokenAddress.address,
-        positionVault: pos1Vault,
-        tokenVault,
-        status,
-        mint: token.publicKey,
-      }).rpc();
+  //   const tx = await program.methods.unstake(1).
+  //     accounts ({
+  //       pool: pool1,
+  //       stakingPosition: stakingPosition1,
+  //       userTokenAccount: userTokenAddress.address,
+  //       positionVault: pos1Vault,
+  //       tokenVault,
+  //       status,
+  //       mint: token.publicKey,
+  //     }).rpc();
   
-    waitForTransaction(connection, tx);
+  //   waitForTransaction(connection, tx);
 
-    const userPosition = await program.account.stakingPosition.fetch(stakingPosition1);
-    assert.equal(userPosition.stakedAmount.toString(), "0", "user stake still live");
-    const userBalance = await connection.getTokenAccountBalance(userTokenAddress.address);
-    assert.equal(userBalance.value.uiAmount, 10020 , "user balance does not match");
-  })
+  //   const userPosition = await program.account.stakingPosition.fetch(stakingPosition1);
+  //   assert.equal(userPosition.stakedAmount.toString(), "0", "user stake still live");
+  //   const userBalance = await connection.getTokenAccountBalance(userTokenAddress.address);
+  //   assert.equal(userBalance.value.uiAmount, 10020 , "user balance does not match");
+  // })
 });

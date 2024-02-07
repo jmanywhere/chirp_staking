@@ -163,13 +163,13 @@ const useStakingStore = create<StakingStore>((set, get) => ({
     } ).map((pool, i)=>{
       return {
         pool_id: pool.account.poolId,
-        pool_staked: pool.account.poolStaked,
+        pool_staked: pool.account.poolStaked.toNumber() / 1e9,
         lock_duration: pool.account.lockDuration,
         reward_basis: pool.account.rewardBasis,
         is_active: pool.account.isActive,
-        user_staked: userPositions[i]?.stakedAmount,
-        user_start: userPositions[i]?.startTime,
-        user_locked: userPositions[i]?.lockAmount,
+        user_staked: userPositions[i]?.stakedAmount || new anchor.BN("0"),
+        user_start: userPositions[i]?.startTime || new anchor.BN("0"),
+        user_locked: userPositions[i]?.lockAmount || new anchor.BN("0"),
       }
     })
 
@@ -272,7 +272,7 @@ const useStakingStore = create<StakingStore>((set, get) => ({
       );
 
       // Make the createPool transaction
-      const tx = await program.methods.createPool(poolId, lockDuration, rewardBasis).accounts({
+      const tx = await program.methods.createPool(poolId, new anchor.BN(lockDuration),rewardBasis).accounts({
           newPool: poolIdAccount[0],
           status, // Replace with the actual status account
           // Add other accounts as needed
@@ -378,7 +378,7 @@ const useStakingStore = create<StakingStore>((set, get) => ({
       );
 
       // Make the update pool lock transaction
-      const tx = await program.methods.updatePoolLock(poolId, lockDuration)
+      const tx = await program.methods.updatePoolLock(poolId, new anchor.BN(lockDuration))
       .accounts({
           pool: poolIdAccount[0],
           // Add other accounts as needed

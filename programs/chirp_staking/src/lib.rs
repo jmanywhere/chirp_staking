@@ -315,6 +315,14 @@ pub mod chirp_staking {
         ctx.accounts.status.pools_enabled = !ctx.accounts.status.pools_enabled;
         Ok(())
     }
+
+    pub fn transfer_owner(ctx: Context<DisablePools>, new_owner: Pubkey) -> Result<()> {
+        if ctx.accounts.status.owner != *ctx.accounts.signer.to_account_info().key {
+            return err!(StakingErrors::NotOwner);
+        }
+        ctx.accounts.status.owner = new_owner;
+        Ok(())
+    }
 }
 
 //------------------Helper Functions------------------//

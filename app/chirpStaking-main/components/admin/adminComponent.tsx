@@ -126,7 +126,7 @@ const StakeComponent = () => {
               </div>
               <div className="w-full">
                 <span className="text-white text-2xl font-[Chillow] p-3 tracking-wider text-nowrap">
-                  What's the rewward basis?
+                  What&apos;s the rewward basis?
                 </span>
                 <input
                   type="number"
