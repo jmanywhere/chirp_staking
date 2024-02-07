@@ -9,8 +9,9 @@ import useStakingStore from "@/hooks/useStakingProgram";
 import { AnchorWallet, useAnchorWallet } from "@solana/wallet-adapter-react";
 import { useState, useEffect } from "react";
 import WalletMultiButtonStyled from "@/components/shared/WalletMultiButtonStyled";
+import { type NextPage } from "next";
 
-const Stakepage = () => {
+const Home: NextPage = () => {
   const stats = useStakingStore((state) => state.stats);
   const connection = useStakingStore((state) => state.state.connection);
   const wallet = useAnchorWallet();
@@ -40,7 +41,7 @@ const Stakepage = () => {
           <>
             <CardComponent />
             <StakeComponent />
-            <PoolsComponent/>
+            <PoolsComponent />
           </>
         ) : (
           <>
@@ -62,4 +63,4 @@ const Stakepage = () => {
   );
 };
 
-export default Stakepage;
+export default Home;
