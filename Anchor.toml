@@ -11,7 +11,7 @@ chirp_staking = "5ghCYkAfKSYZxuWi3ACcWviF9d7zCE8XKf2LD4hajMcL"
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "Localnet"
+cluster = "devnet"
 wallet = "/Users/jmf/.config/solana/id.json"
 
 [scripts]
